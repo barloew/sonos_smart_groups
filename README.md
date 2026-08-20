@@ -1,8 +1,10 @@
 # Sonos Smart Groups
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="custom_components/sonos_smart_groups/brand/dark_logo@2x.png">
-  <img src="custom_components/sonos_smart_groups/brand/logo@2x.png" alt="Sonos Smart Groups" width="320">
+  <source media="(prefers-color-scheme: dark)"
+          srcset="https://raw.githubusercontent.com/barloew/sonos_smart_groups/main/custom_components/sonos_smart_groups/brand/dark_logo%402x.png">
+  <img src="https://raw.githubusercontent.com/barloew/sonos_smart_groups/main/custom_components/sonos_smart_groups/brand/logo%402x.png"
+       alt="Sonos Smart Groups" width="320">
 </picture>
 
 [![hacs][hacs-badge]][hacs-url]
