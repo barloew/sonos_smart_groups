@@ -1,20 +1,20 @@
 blueprint:
   name: "Sonos Smart Group"
   description: >-
-    A smart group is one leader speaker and any number of followers that keep
+    A smart group is one leader room and any number of followers that keep
     themselves in step with it.
 
 
     **Followers copy what you choose.** Volume, mute, source, transport, and —
     if you want — the equalizer and home theater settings. Volume, bass and
-    treble can each be scaled per follower, so the speaker at the far end of an
-    open-plan room can sit a little louder without you ever thinking about it
+    treble can each be scaled per follower, so the room at the far end of an
+    open-plan space can sit a little louder without you ever thinking about it
     again.
 
 
     **Smart groups can outrank each other.** Mark one as *superior* and it takes
-    precedence: subordinate groups hand over their speakers and take them back
-    when it is done. A home theater group that borrows the living room speakers
+    precedence: subordinate groups hand their rooms over and take them back
+    when it is done. A home theater group that takes the living room with it
     while a film is on is the classic case.
 
 
@@ -26,7 +26,7 @@ blueprint:
     ---
 
 
-    One automation describes one smart group. Two speakers that should follow
+    One automation describes one smart group. Two rooms that should follow
     each other both ways need two automations, one per direction.
 
 
@@ -42,16 +42,16 @@ blueprint:
       icon: mdi:speaker-multiple
       description: >-
         Who leads, and who follows. Only the leader is watched — followers never
-        trigger anything themselves, which is what keeps two speakers from
-        chasing each other.
+        trigger anything themselves, which is what keeps two rooms from chasing
+        each other.
       collapsed: false
       input:
         leader:
           name: Leader
           description: >-
-            The speaker everyone else takes its cue from. Pick the one you
-            actually reach for when you want to change the music — the kitchen
-            speaker rather than the one on the office shelf.
+            The room everyone else takes its cue from. Pick the one you actually
+            reach for when you want to change the music — the kitchen rather than
+            the office.
           selector:
             entity:
               filter:
@@ -63,23 +63,23 @@ blueprint:
         followers:
           name: Followers
           description: >-
-            One row per speaker.
+            One row per room.
 
 
             **Volume factor** is relative to the leader. 1.0 keeps them level,
             1.4 makes the follower noticeably louder, 0.8 quieter. In an
-            open-plan living room the speaker furthest from the sofa usually
-            wants 1.2 to 1.5.
+            open-plan living room the room furthest from the sofa usually wants
+            1.2 to 1.5.
 
 
             **Bass and treble factors** work the same way, and only matter if
             you switch on equalizer copying in section 2. Leave them at 1.0
-            unless a speaker sits in a corner or against glass.
+            unless a room has its speakers in a corner or against glass.
 
 
-            **Add to group** pulls the speaker into the leader's group so they
-            play the same thing in sync. Leave it off for a follower that should
-            only match the volume while playing something else.
+            **Add to group** pulls the room into the leader's group so they play
+            the same thing in sync. Leave it off for a follower that should only
+            match the volume while playing something else.
           selector:
             object:
               label_field: speaker
@@ -87,7 +87,7 @@ blueprint:
               multiple: true
               fields:
                 speaker:
-                  label: Speaker
+                  label: Room
                   required: true
                   selector:
                     entity:
@@ -135,7 +135,7 @@ blueprint:
         you want it.
 
 
-        Controls a speaker does not have are skipped silently, so it is safe to
+        Controls a room does not have are skipped silently, so it is safe to
         tick surround for a group that mixes a soundbar with bookshelf speakers.
       collapsed: false
       input:
@@ -143,7 +143,7 @@ blueprint:
           name: Playback
           description: >-
             Source and transport only apply to followers that stay out of the
-            group — speakers inside a group already follow their leader.
+            group — rooms inside a group already follow their leader.
           default:
             - volume
             - mute
@@ -166,8 +166,8 @@ blueprint:
         copy_equalizer:
           name: Equalizer
           description: >-
-            Sonos keeps these per speaker. Copying them is what makes a group
-            sound like one system rather than several.
+            Sonos keeps these per room. Copying them is what makes a group sound
+            like one system rather than several.
           default: []
           selector:
             select:
@@ -239,8 +239,8 @@ blueprint:
           description: >-
             Leave empty for any source. Sonos names its inputs `TV`, `Line-in`,
             `AirPlay` and `Spotify Connect`; a line-in shared from another room
-            appears under that room's name. Use this when the same speaker
-            should behave differently depending on what it is playing — one
+            appears under that room's name. Use this when the same room should
+            behave differently depending on what it is playing — one
             smart group for the TV, another for music.
           default: ""
           selector:
@@ -283,9 +283,9 @@ blueprint:
               multiple: true
 
         block_if_playing:
-          name: Never while these are playing
+          name: Never while these rooms are playing
           description: >-
-            Speakers that outrank this group. Usually unnecessary once you use
+            Rooms that outrank this group. Usually unnecessary once you use
             precedence instead.
           default: []
           selector:
@@ -300,12 +300,12 @@ blueprint:
       icon: mdi:crown-outline
       description: >-
         Lets one smart group outrank another. Skip this entirely if your groups
-        never need to borrow each other's speakers.
+        never need to take over each other's rooms.
 
 
         A **superior** group takes precedence when its leader starts. Its leader
         becomes the *principal*. **Subordinate** groups stand down and hand
-        their speakers over, then take them back afterwards.
+        their rooms over, then take them back afterwards.
 
 
         Create locks first: Settings → Devices & services → Sonos Smart Groups →
@@ -340,7 +340,7 @@ blueprint:
                   integration: sonos_smart_groups
 
         stand_down_action:
-          name: When standing down, this group's speakers should
+          name: When standing down, this group's rooms should
           default: join_principal
           selector:
             select:
@@ -366,7 +366,7 @@ blueprint:
                   value: rebuild
                 - label: "Leave everything as it is"
                   value: keep
-                - label: "Release all speakers"
+                - label: "Release all rooms"
                   value: release
 
         precedence_timeout:
@@ -503,8 +503,8 @@ blueprint:
           name: Volume tolerance
           description: >-
             Differences smaller than this are left alone. This is what stops
-            two speakers nudging each other back and forth. 0.5 lets every
-            single volume step through.
+            two rooms nudging each other back and forth. 0.5 lets every single
+            volume step through.
           default: 0.5
           selector:
             number:
@@ -514,7 +514,7 @@ blueprint:
 
         gap_ms:
           name: Command gap
-          description: Pause after each command. Raise it if speakers stutter.
+          description: Pause after each command. Raise it if playback stutters.
           default: 120
           selector:
             number:
@@ -905,7 +905,7 @@ actions:
               | list | count) == 0 }}
 
       - condition: template
-        alias: "No blocking speaker is playing"
+        alias: "No blocking room is playing"
         value_template: >-
           {{ (block_if_playing | default([]) | select('is_state', 'playing')
               | list | count) == 0 }}

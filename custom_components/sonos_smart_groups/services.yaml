@@ -7,7 +7,7 @@ apply:
   fields:
     leader:
       name: Leader
-      description: The speaker the followers take their settings from.
+      description: The room the followers take their settings from.
       required: true
       selector:
         entity:
@@ -27,7 +27,7 @@ apply:
       description: >-
         Which properties to copy. Equalizer and home theater controls are found
         through the entity registry, so they work regardless of the language
-        your entity IDs were created in. Controls a speaker does not have are
+        your entity IDs were created in. Controls a room does not have are
         skipped.
       default: [volume, mute]
       selector:
@@ -87,7 +87,7 @@ take_precedence:
           domain: switch
     principal:
       name: Principal
-      description: The leader of the superior smart group.
+      description: The leader room of the superior smart group.
       required: true
       selector:
         entity:
