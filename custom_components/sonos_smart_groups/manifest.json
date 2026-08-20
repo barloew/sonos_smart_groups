@@ -1,8 +1,12 @@
 {
   "domain": "sonos_smart_groups",
   "name": "Sonos Smart Groups",
-  "after_dependencies": ["sonos"],
-  "codeowners": ["@barloew"],
+  "after_dependencies": [
+    "sonos"
+  ],
+  "codeowners": [
+    "@barloew"
+  ],
   "config_flow": true,
   "dependencies": [],
   "documentation": "https://github.com/barloew/sonos_smart_groups",
@@ -11,5 +15,5 @@
   "issue_tracker": "https://github.com/barloew/sonos_smart_groups/issues",
   "requirements": [],
   "single_config_entry": true,
-  "version": "1.0.0"
+  "version": "1.0.1"
 }

@@ -328,7 +328,11 @@ blueprint:
         precedence_lock:
           name: Precedence lock
           description: A lock from the Sonos Smart Groups integration.
-          default: ""
+          # An empty list, not an empty string: this is used as a trigger
+          # entity_id, and "" is not a valid entity ID — an automation without
+          # precedence would refuse to load. An empty list simply means no
+          # entities, so the trigger never fires.
+          default: []
           selector:
             entity:
               filter:
@@ -612,8 +616,11 @@ triggers:
     to: "off"
     id: precedence_released
 
+  # Een genest trigger-item mag maar één sleutel hebben, anders pakt Home
+  # Assistant het niet uit (_base_trigger_list_flatten). Er kan dus geen `id`
+  # bij; de autostart-tak herkent zichzelf hieronder aan de variabele
+  # `builtin_ids`.
   - triggers: !input start_triggers
-    id: autostart
 
   - triggers: !input extra_triggers
 
@@ -635,6 +642,7 @@ variables:
   on_precedence_end: !input on_precedence_end
   precedence_timeout: !input precedence_timeout
   hold_switch: !input hold_switch
+  start_trigger_list: !input start_triggers
   start_media: !input start_media
   start_source: !input start_source
   start_volume: !input start_volume
@@ -650,6 +658,24 @@ variables:
        + (copy_home_theater | default([])) }}
   follower_ids: "{{ (followers | default([])) | map(attribute='speaker') | list }}"
   members: "{{ state_attr(leader, 'group_members') or [] }}"
+
+  # Triggers the blueprint defines itself. Anything else must have come from
+  # one of the user's own trigger lists, which cannot carry an id of our
+  # choosing: Home Assistant only unpacks a nested `triggers:` item when it is
+  # the only key in that item.
+  builtin_ids:
+    - sync
+    - leader_started
+    - leader_stopped
+    - precedence_taken
+    - precedence_released
+  from_user: >-
+    {{ (trigger.id | default('', true)) not in builtin_ids }}
+  # Whether this smart group is meant to start by itself at all. If you fill in
+  # both "Start when" and "Extra triggers", an extra trigger will also run the
+  # start actions — the two lists are indistinguishable once they fire.
+  has_autostart: >-
+    {{ (start_trigger_list | default([], true) | count) > 0 }}
   principal: >-
     {{ state_attr(precedence_lock, 'principal')
        if (precedence_lock | default('', true) | length) > 0 else none }}
@@ -784,7 +810,7 @@ actions:
       - alias: "Start by itself"
         conditions:
           - condition: template
-            value_template: "{{ trigger.id == 'autostart' }}"
+            value_template: "{{ from_user and has_autostart }}"
         sequence:
           - condition: and
             conditions: !input start_conditions

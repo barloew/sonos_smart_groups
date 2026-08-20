@@ -549,6 +549,36 @@ lazily, and on a first install it may not exist yet. That is harmless, because
 never seen. The cache reset matters for files that *changed*, which is why it
 runs even when nothing was copied.
 
+### The nested trigger gotcha
+
+The blueprint hands the user's own trigger lists to Home Assistant like this:
+
+```yaml
+triggers:
+  - trigger: state
+    ...
+  - triggers: !input start_triggers
+```
+
+`_base_trigger_list_flatten()` in `config_validation.py` only unpacks such an
+item when `triggers` is **the only key**:
+
+```python
+if CONF_TRIGGERS in t and len(t) == 1:
+    flatlist.extend(ensure_list(t[CONF_TRIGGERS]))
+```
+
+Add anything alongside it — an `id`, an `alias` — and Home Assistant treats the
+item as an ordinary trigger, finds no `trigger:` key, and refuses to load the
+automation with `required key not provided @ data['triggers'][n]['trigger']`.
+
+That is why the autostart branch cannot identify itself by trigger id. It
+compares `trigger.id` against `builtin_ids` instead: anything that is not one
+of the blueprint's own triggers came from a user list, and the branch runs when
+*Start when* has at least one trigger in it. The trade-off is that filling in
+both *Start when* and *Extra triggers* makes an extra trigger run the start
+actions too — the two lists are indistinguishable once they fire.
+
 ### Adding a mirrorable property
 
 1. Add the Sonos key to the right list in `const.py`
