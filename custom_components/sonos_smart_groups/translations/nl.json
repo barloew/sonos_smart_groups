@@ -1,0 +1,86 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Sonos Smart Groups",
+        "description": "Met een precedence-lock kan de ene smart group voorrang krijgen op de andere. Geef er één per situatie die je speakers mag overnemen — Home theater, Deurbel, Feest. Meerdere namen scheid je met komma's; je kunt dit later aanpassen.",
+        "data": {
+          "precedence_locks": "Precedence-locks"
+        }
+      }
+    },
+    "abort": {
+      "already_configured": "Sonos Smart Groups is al ingesteld."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Precedence-locks",
+        "description": "Per naam wordt één schakelaar aangemaakt. Haal je een naam weg, dan verdwijnt de schakelaar — controleer eerst of geen smart group er nog naar verwijst.",
+        "data": {
+          "precedence_locks": "Precedence-locks"
+        }
+      }
+    }
+  },
+  "services": {
+    "apply": {
+      "name": "Smart group toepassen",
+      "description": "Spiegel een leader naar zijn followers.",
+      "fields": {
+        "leader": {
+          "name": "Leader",
+          "description": "De speaker waarvan de followers hun instellingen overnemen."
+        },
+        "followers": {
+          "name": "Followers",
+          "description": "Speakers met hun factoren en wel/niet groeperen."
+        },
+        "mirror": {
+          "name": "Overnemen",
+          "description": "Welke eigenschappen de followers kopiëren."
+        },
+        "tolerance": {
+          "name": "Tolerantie",
+          "description": "Volumepunten waaronder er niets wordt geschreven."
+        },
+        "gap_ms": {
+          "name": "Pauze",
+          "description": "Wachttijd na elke schrijfactie."
+        }
+      }
+    },
+    "take_precedence": {
+      "name": "Precedence nemen",
+      "description": "Neem een lock en leg de principal vast.",
+      "fields": {
+        "lock": {
+          "name": "Precedence-lock",
+          "description": "De te nemen lock."
+        },
+        "principal": {
+          "name": "Principal",
+          "description": "De leader van de superior smart group."
+        }
+      }
+    },
+    "release_precedence": {
+      "name": "Precedence vrijgeven",
+      "description": "Geef een precedence-lock vrij.",
+      "fields": {
+        "lock": {
+          "name": "Precedence-lock",
+          "description": "De vrij te geven lock."
+        }
+      }
+    }
+  },
+  "entity": {
+    "switch": {
+      "precedence": {
+        "name": "Precedence"
+      }
+    }
+  }
+}

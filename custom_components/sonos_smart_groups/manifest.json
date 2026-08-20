@@ -1,0 +1,15 @@
+{
+  "domain": "sonos_smart_groups",
+  "name": "Sonos Smart Groups",
+  "after_dependencies": ["sonos"],
+  "codeowners": ["@barloew"],
+  "config_flow": true,
+  "dependencies": [],
+  "documentation": "https://github.com/barloew/sonos_smart_groups",
+  "integration_type": "hub",
+  "iot_class": "local_push",
+  "issue_tracker": "https://github.com/barloew/sonos_smart_groups/issues",
+  "requirements": [],
+  "single_config_entry": true,
+  "version": "1.0.0"
+}

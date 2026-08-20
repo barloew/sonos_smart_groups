@@ -1,0 +1,107 @@
+apply:
+  name: Apply smart group
+  description: >-
+    Mirror a leader onto its followers. Writes are serialised across all smart
+    groups and skipped when the speaker already holds the target value, which
+    is what keeps feedback loops from starting.
+  fields:
+    leader:
+      name: Leader
+      description: The speaker the followers take their settings from.
+      required: true
+      selector:
+        entity:
+          filter:
+            - domain: media_player
+    followers:
+      name: Followers
+      description: >-
+        List of {speaker, volume_factor, bass_factor, treble_factor, join}.
+        Factors are relative to the leader.
+      required: true
+      example: '[{"speaker": "media_player.kitchen", "volume_factor": 1.4, "join": true}]'
+      selector:
+        object:
+    mirror:
+      name: Mirror
+      description: >-
+        Which properties to copy. Equalizer and home theater controls are found
+        through the entity registry, so they work regardless of the language
+        your entity IDs were created in. Controls a speaker does not have are
+        skipped.
+      default: [volume, mute]
+      selector:
+        select:
+          multiple: true
+          options:
+            - volume
+            - mute
+            - source
+            - transport
+            - cross_fade
+            - bass
+            - treble
+            - balance
+            - loudness
+            - sub_enabled
+            - sub_gain
+            - sub_crossover
+            - surround_enabled
+            - surround_level
+            - music_surround_level
+            - surround_mode
+            - dialog_level
+            - night_mode
+            - audio_delay
+    tolerance:
+      name: Tolerance
+      description: Volume points below which nothing is written.
+      default: 0.5
+      selector:
+        number:
+          min: 0.5
+          max: 10
+          step: 0.5
+    gap_ms:
+      name: Command gap
+      default: 120
+      selector:
+        number:
+          min: 0
+          max: 2000
+          step: 10
+          unit_of_measurement: ms
+
+take_precedence:
+  name: Take precedence
+  description: >-
+    Hold a precedence lock and record which speaker is the principal.
+    Subordinate smart groups stand down and hand their speakers over.
+  fields:
+    lock:
+      name: Precedence lock
+      required: true
+      selector:
+        entity:
+          integration: sonos_smart_groups
+          domain: switch
+    principal:
+      name: Principal
+      description: The leader of the superior smart group.
+      required: true
+      selector:
+        entity:
+          filter:
+            - domain: media_player
+
+release_precedence:
+  name: Release precedence
+  description: Release a precedence lock. Subordinate groups rebuild themselves.
+  fields:
+    lock:
+      name: Precedence lock
+      required: true
+      selector:
+        entity:
+          integration: sonos_smart_groups
+          domain: switch

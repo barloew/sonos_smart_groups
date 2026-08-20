@@ -1,0 +1,86 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Sonos Smart Groups",
+        "description": "A precedence lock lets one smart group outrank another. Name one per situation that should be able to take over your speakers — Home theater, Doorbell, Party. Separate several with commas; you can change this later.",
+        "data": {
+          "precedence_locks": "Precedence locks"
+        }
+      }
+    },
+    "abort": {
+      "already_configured": "Sonos Smart Groups is already set up."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Precedence locks",
+        "description": "One switch is created per name. Removing a name deletes its switch, so check that no smart group still refers to it.",
+        "data": {
+          "precedence_locks": "Precedence locks"
+        }
+      }
+    }
+  },
+  "services": {
+    "apply": {
+      "name": "Apply smart group",
+      "description": "Mirror a leader onto its followers.",
+      "fields": {
+        "leader": {
+          "name": "Leader",
+          "description": "The speaker the followers take their settings from."
+        },
+        "followers": {
+          "name": "Followers",
+          "description": "Speakers with their factors and whether to group."
+        },
+        "mirror": {
+          "name": "Mirror",
+          "description": "Which properties the followers copy."
+        },
+        "tolerance": {
+          "name": "Tolerance",
+          "description": "Volume points below which nothing is written."
+        },
+        "gap_ms": {
+          "name": "Command gap",
+          "description": "Pause after each write."
+        }
+      }
+    },
+    "take_precedence": {
+      "name": "Take precedence",
+      "description": "Hold a lock and record the principal.",
+      "fields": {
+        "lock": {
+          "name": "Precedence lock",
+          "description": "The lock to take."
+        },
+        "principal": {
+          "name": "Principal",
+          "description": "The leader of the superior smart group."
+        }
+      }
+    },
+    "release_precedence": {
+      "name": "Release precedence",
+      "description": "Release a precedence lock.",
+      "fields": {
+        "lock": {
+          "name": "Precedence lock",
+          "description": "The lock to release."
+        }
+      }
+    }
+  },
+  "entity": {
+    "switch": {
+      "precedence": {
+        "name": "Precedence"
+      }
+    }
+  }
+}
