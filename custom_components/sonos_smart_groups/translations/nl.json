@@ -75,12 +75,5 @@
         }
       }
     }
-  },
-  "entity": {
-    "switch": {
-      "precedence": {
-        "name": "Precedence"
-      }
-    }
   }
 }
