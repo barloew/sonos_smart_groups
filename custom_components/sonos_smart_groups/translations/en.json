@@ -75,5 +75,11 @@
         }
       }
     }
+  },
+  "issues": {
+    "blueprint_modified": {
+      "title": "A blueprint was left alone",
+      "description": "`{name}` differs from the version shipped with this update, so it looks like you edited it and it has not been replaced.\n\nYour automations keep working on your version. To take the new one, delete `{path}` and reload the Sonos Smart Groups integration."
+    }
   }
 }

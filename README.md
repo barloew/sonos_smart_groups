@@ -155,7 +155,9 @@ under `custom_components`, and restart Home Assistant.
 
 The blueprint installs itself during setup — no reloading needed. Go to
 **Settings → Automations & scenes → Blueprints** and **Sonos Smart Group** is
-already in the list.
+already in the list. Later updates to the integration bring a newer blueprint
+with them, unless you have edited yours: then it is left alone and you get a
+repair notice instead.
 
 ---
 

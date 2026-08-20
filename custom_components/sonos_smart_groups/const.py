@@ -83,6 +83,15 @@ ATTR_PREVIOUS_PRINCIPAL = "previous_principal"
 
 BLUEPRINT_TARGET = "blueprints/automation/sonos_smart_groups"
 
+# Where the hashes of the blueprints we installed are remembered, so an update
+# can tell an untouched file from one the user edited.
+STORAGE_KEY = f"{DOMAIN}.blueprints"
+STORAGE_VERSION = 1
+
+# Repair issue raised when a bundled blueprint has moved on but the local copy
+# was edited, so we leave it alone.
+ISSUE_BLUEPRINT_MODIFIED = "blueprint_modified"
+
 # Reached by name rather than import, so no manifest dependency is needed just
 # to drop the blueprint cache after installing our own blueprints.
 BLUEPRINT_COMPONENT = "blueprint"

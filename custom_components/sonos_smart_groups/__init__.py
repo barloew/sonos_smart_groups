@@ -15,8 +15,8 @@ Adds the plumbing a blueprint cannot provide on its own:
 from __future__ import annotations
 
 import asyncio
+import hashlib
 import logging
-import shutil
 from pathlib import Path
 
 import voluptuous as vol
@@ -26,6 +26,8 @@ from homeassistant.const import ATTR_ENTITY_ID, Platform
 from homeassistant.core import HomeAssistant, ServiceCall, callback
 from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers import entity_registry as er
+from homeassistant.helpers import issue_registry as ir
+from homeassistant.helpers.storage import Store
 from homeassistant.helpers.typing import ConfigType
 
 from .const import (
@@ -39,6 +41,7 @@ from .const import (
     ATTR_TOLERANCE,
     BLUEPRINT_COMPONENT,
     BLUEPRINT_TARGET,
+    ISSUE_BLUEPRINT_MODIFIED,
     DEFAULT_FACTOR,
     DEFAULT_GAP_MS,
     DEFAULT_TOLERANCE,
@@ -58,6 +61,8 @@ from .const import (
     SERVICE_RELEASE,
     SERVICE_TAKE,
     SONOS_DOMAIN,
+    STORAGE_KEY,
+    STORAGE_VERSION,
     SWITCH_KEYS,
 )
 
@@ -131,37 +136,103 @@ async def _async_update_listener(hass: HomeAssistant, entry: ConfigEntry) -> Non
 
 
 async def _async_install_blueprints(hass: HomeAssistant) -> None:
-    """Copy bundled blueprints into the user's blueprint folder.
+    """Install the bundled blueprints, and update them when it is safe to.
 
-    Existing files are left alone, so an edited blueprint survives an upgrade.
-    Delete the file and reload the integration to get the bundled one back.
+    The tricky part is telling an untouched file from one the user has edited.
+    Overwriting blindly would throw away their work; never overwriting means a
+    bugfix in the blueprint can only reach them by hand.
+
+    So we remember the SHA-256 of every file we wrote:
+
+        file missing            -> install it
+        hash matches what we wrote -> untouched, safe to replace
+        hash differs            -> edited, leave alone and raise a repair issue
+
+    Deleting the file and reloading the integration always gets the bundled
+    version back.
     """
     source = Path(__file__).parent / "blueprints"
     target = Path(hass.config.path(BLUEPRINT_TARGET))
 
-    def _copy() -> list[str]:
+    store: Store[dict[str, str]] = Store(hass, STORAGE_VERSION, STORAGE_KEY)
+    known: dict[str, str] = await store.async_load() or {}
+
+    def _sync() -> tuple[dict[str, str], list[str], list[str]]:
+        """Do the filesystem work. Returns (hashes, installed, skipped)."""
         if not source.is_dir():
-            return []
+            return known, [], []
+
         target.mkdir(parents=True, exist_ok=True)
-        copied: list[str] = []
+        hashes = dict(known)
+        installed: list[str] = []
+        skipped: list[str] = []
+
         for item in sorted(source.glob("*.yaml")):
+            bundled = item.read_bytes()
+            bundled_hash = hashlib.sha256(bundled).hexdigest()
             destination = target / item.name
+
             if not destination.exists():
-                shutil.copyfile(item, destination)
-                copied.append(item.name)
-        return copied
+                destination.write_bytes(bundled)
+                hashes[item.name] = bundled_hash
+                installed.append(item.name)
+                continue
+
+            current_hash = hashlib.sha256(destination.read_bytes()).hexdigest()
+
+            if current_hash == bundled_hash:
+                hashes[item.name] = bundled_hash  # already up to date
+                continue
+
+            if known.get(item.name) == current_hash:
+                # Untouched since we wrote it, so this is our own update.
+                destination.write_bytes(bundled)
+                hashes[item.name] = bundled_hash
+                installed.append(item.name)
+                continue
+
+            # Edited locally, or installed before we started keeping hashes.
+            skipped.append(item.name)
+
+        return hashes, installed, skipped
 
     try:
-        copied = await hass.async_add_executor_job(_copy)
+        hashes, installed, skipped = await hass.async_add_executor_job(_sync)
     except OSError as err:  # pragma: no cover - filesystem dependent
         _LOGGER.warning("Could not install blueprints: %s", err)
         return
 
-    await _async_reset_blueprint_cache(hass)
+    if hashes != known:
+        await store.async_save(hashes)
 
-    if copied:
+    if installed:
+        await _async_reset_blueprint_cache(hass)
+        _LOGGER.info("Installed or updated blueprints: %s", ", ".join(installed))
+
+    _async_report_skipped(hass, skipped)
+
+
+@callback
+def _async_report_skipped(hass: HomeAssistant, skipped: list[str]) -> None:
+    """Tell the user about blueprints we did not dare to overwrite."""
+    for name in skipped:
+        ir.async_create_issue(
+            hass,
+            DOMAIN,
+            f"{ISSUE_BLUEPRINT_MODIFIED}_{name}",
+            is_fixable=False,
+            severity=ir.IssueSeverity.WARNING,
+            translation_key=ISSUE_BLUEPRINT_MODIFIED,
+            translation_placeholders={
+                "name": name,
+                "path": f"{BLUEPRINT_TARGET}/{name}",
+            },
+        )
         _LOGGER.info(
-            "Installed Sonos Smart Groups blueprints: %s", ", ".join(copied)
+            "Left %s alone: it differs from the version shipped with this "
+            "integration, so it looks edited. Delete it and reload the "
+            "integration to get the bundled version",
+            name,
         )
 
 
@@ -171,15 +242,12 @@ async def _async_reset_blueprint_cache(hass: HomeAssistant) -> None:
     The blueprint component keeps a DomainBlueprints object per domain in
     `hass.data["blueprint"]["automation"]`, and resetting its cache is exactly
     what the "Reload blueprints" menu item does. Doing it here saves the user
-    a step after installation.
+    a step after installation, and matters after an update, when the path was
+    already cached with the old contents.
 
     Deliberately defensive: this reaches into another integration's data, so
     every failure is non-fatal. The worst case is the old behaviour, where the
     user reloads blueprints by hand.
-
-    The object is created lazily, so on a first install it may not exist yet.
-    That is fine — an empty cache needs no resetting, and `_load_blueprints`
-    picks up new files on its next directory scan either way.
     """
     domain_blueprints = (hass.data.get(BLUEPRINT_COMPONENT) or {}).get(
         AUTOMATION_COMPONENT

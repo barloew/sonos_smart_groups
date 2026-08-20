@@ -75,5 +75,11 @@
         }
       }
     }
+  },
+  "issues": {
+    "blueprint_modified": {
+      "title": "Een blueprint is met rust gelaten",
+      "description": "`{name}` wijkt af van de versie die met deze update meekwam, dus het lijkt erop dat je hem hebt aangepast — hij is niet vervangen.\n\nJe automatiseringen blijven op jouw versie werken. Wil je de nieuwe, verwijder dan `{path}` en herlaad de integratie Sonos Smart Groups."
+    }
   }
 }

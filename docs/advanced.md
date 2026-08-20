@@ -549,10 +549,30 @@ custom_components/sonos_smart_groups/
 ### Blueprint installation
 
 On `async_setup_entry`, every `*.yaml` in `blueprints/` is copied to
-`blueprints/automation/sonos_smart_groups/` in the user's config directory.
-**Existing files are never overwritten**, so an edited blueprint survives an
-upgrade. Delete the file and reload the integration to get the bundled version
-back.
+`blueprints/automation/sonos_smart_groups/` in the user's config directory —
+and kept up to date afterwards, without ever throwing away an edit.
+
+The awkward part is telling an untouched file from an edited one. Overwriting
+blindly destroys the user's work; never overwriting means a fix in the
+blueprint can only reach them by hand. So the SHA-256 of every file we write is
+remembered in a `Store` under `.storage`:
+
+| Situation | What happens |
+|---|---|
+| File missing | Install it, remember the hash |
+| Hash matches the bundled file | Already current, nothing to do |
+| Hash matches what *we* last wrote | Untouched, so replace it and update the record |
+| Hash matches neither | Edited — leave alone, raise a repair issue |
+
+The last case also covers anyone who installed before hashes were recorded, so
+the first update after 1.1.0 may report a blueprint as edited when it is not.
+Deleting the file and reloading the integration always restores the bundled
+version and re-syncs the record.
+
+The blueprint also carries a `source_url`, so Home Assistant offers **Re-import
+blueprint** in the blueprint list as a second route. That fetches from `main`
+rather than from the installed release, so it can land a blueprint slightly
+ahead of the integration.
 
 Afterwards the automation blueprint cache is dropped, so the blueprint is
 usable straight away without the *Reload blueprints* menu item:

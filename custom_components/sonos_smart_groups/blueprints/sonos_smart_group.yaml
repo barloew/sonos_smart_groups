@@ -1,5 +1,8 @@
 blueprint:
   name: "Sonos Smart Group"
+  # Lets Home Assistant offer "Re-import blueprint" in the blueprint list, and
+  # lets tools that track blueprints follow this one.
+  source_url: https://raw.githubusercontent.com/barloew/sonos_smart_groups/main/custom_components/sonos_smart_groups/blueprints/sonos_smart_group.yaml
   description: >-
     A smart group is one leader room and any number of followers that keep
     themselves in step with it.
