@@ -1,6 +1,6 @@
 # Sonos Smart Groups
 
-![Sonos Smart Groups](https://raw.githubusercontent.com/barloew/sonos_smart_groups/main/custom_components/sonos_smart_groups/brand/logo%402x.png)
+![Sonos Smart Groups](https://raw.githubusercontent.com/barloew/sonos_smart_groups/main/custom_components/sonos_smart_groups/brand/logo.png)
 
 [![hacs][hacs-badge]][hacs-url]
 [![validate][validate-badge]][validate-url]
