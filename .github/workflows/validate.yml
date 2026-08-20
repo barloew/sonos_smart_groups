@@ -7,16 +7,27 @@ on:
     - cron: "0 4 * * 1"
 
 jobs:
-  hassfest:
+  blueprints:
+    name: Generated blueprints are up to date
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: pip install pyyaml
+      - run: python3 tools/build_blueprints.py --check
+
+  hassfest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
       - uses: home-assistant/actions/hassfest@master
 
   hacs:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v4
       - uses: hacs/action@main
         with:
           category: integration

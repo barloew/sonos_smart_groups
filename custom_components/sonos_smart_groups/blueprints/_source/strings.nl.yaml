@@ -1,0 +1,90 @@
+# Dutch strings for the blueprint.
+#
+# Keys are the exact English text as it appears in
+# blueprints/_source/sonos_smart_group.yaml; values are the translation.
+# tools/build_blueprints.py replaces them literally, longest first, and warns
+# about any key it cannot find — so a rename in the source shows up as a
+# warning rather than a silently untranslated field.
+#
+# Do NOT translate: input keys, !input references, trigger ids, entity ids, or
+# the `value:` of a select option. Those are structural.
+
+# ── Blueprint ────────────────────────────────────────────────────────────
+"Sonos Smart Group": "Sonos Smart Group"
+
+# ── Sections ─────────────────────────────────────────────────────────────
+"1 · The smart group": "1 · De smart group"
+"2 · What followers copy": "2 · Wat followers overnemen"
+"3 · When the smart group forms": "3 · Wanneer de groep zich vormt"
+"4 · Precedence": "4 · Voorrang"
+"5 · Starting by itself": "5 · Vanzelf starten"
+"6 · Fine-tuning": "6 · Fijnafstelling"
+
+# ── Field names ──────────────────────────────────────────────────────────
+"Leader": "Leader"
+"Followers": "Followers"
+"Playback": "Afspelen"
+"Equalizer": "Equalizer"
+"Home theater": "Home theater"
+"Only while the leader is playing": "Alleen terwijl de leader speelt"
+"Only for this source": "Alleen bij deze bron"
+"When the leader stops": "Wanneer de leader stopt"
+"Only when these are on": "Alleen als deze aan staan"
+"Never while these are on": "Nooit terwijl deze aan staan"
+"Never while these rooms are playing": "Nooit terwijl deze kamers spelen"
+"This smart group is": "Deze smart group is"
+"Precedence lock": "Voorrangsslot"
+"When standing down, this group's rooms should": "Bij het wijken doen de kamers van deze groep dit"
+"When precedence is released": "Wanneer de voorrang wordt vrijgegeven"
+"Wait before releasing precedence": "Wachttijd voor het vrijgeven van voorrang"
+"Hold switch": "Vasthoudschakelaar"
+"Start when": "Starten wanneer"
+"But only if": "Maar alleen als"
+"Play this": "Speel dit af"
+"Or switch to this input": "Of schakel naar deze ingang"
+"Set the leader to this volume": "Zet de leader op dit volume"
+"Then": "Daarna"
+"Settle time": "Bezinktijd"
+"Volume tolerance": "Volumetolerantie"
+"Command gap": "Pauze tussen commando's"
+"Cooldown": "Afkoeltijd"
+"Only when the leader is in charge": "Alleen als de leader de baas is"
+"Extra triggers": "Extra triggers"
+"Extra conditions": "Extra voorwaarden"
+"Run before": "Vooraf uitvoeren"
+"Run after": "Achteraf uitvoeren"
+
+# ── Select options ───────────────────────────────────────────────────────
+"Volume — scaled by each follower's factor": "Volume — geschaald met de factor van elke follower"
+"Mute": "Dempen"
+"Source — ungrouped followers only": "Bron — alleen voor ongegroepeerde followers"
+"Play and pause — ungrouped followers only": "Afspelen en pauzeren — alleen voor ongegroepeerde followers"
+"Crossfade": "Crossfade"
+"Bass": "Lage tonen"
+"Treble": "Hoge tonen"
+"Balance": "Balans"
+"Loudness": "Loudness"
+"Subwoofer on/off": "Subwoofer aan/uit"
+"Subwoofer gain": "Subwoofer-versterking"
+"Subwoofer crossover": "Subwoofer-crossover"
+"Surround on/off": "Surround aan/uit"
+"Surround level": "Surroundniveau"
+"Music surround level": "Surroundniveau voor muziek"
+"Full volume for music surround": "Vol volume voor muzieksurround"
+"Speech enhancement": "Spraakverbetering"
+"Night sound": "Nachtgeluid"
+"Audio delay (lip sync)": "Audiovertraging (lipsynchronisatie)"
+"Leave everything as it is": "Laat alles zoals het is"
+"Release the followers from the group": "Haal de followers uit de groep"
+"Pause the followers": "Pauzeer de followers"
+"Not involved in precedence": "Doet niet mee aan voorrang"
+"Superior — takes precedence over others": "Superior — krijgt voorrang op andere groepen"
+"Subordinate — stands down for the superior group": "Subordinate — wijkt voor de superior groep"
+"Join the superior group": "Sluit zich aan bij de superior groep"
+"Leave the group and fall silent": "De groep verlaten en stil vallen"
+"Pause where they are": "Pauzeren waar ze zijn"
+"Rebuild this smart group as defined": "Deze smart group opnieuw opbouwen zoals ingesteld"
+"Release all rooms": "Alle kamers vrijgeven"
+"Start playing": "Beginnen met afspelen"
+"Pause": "Pauzeren"
+"Only set the source and volume": "Alleen de bron en het volume instellen"

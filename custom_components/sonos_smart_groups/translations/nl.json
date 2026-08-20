@@ -5,7 +5,11 @@
         "title": "Sonos Smart Groups",
         "description": "Met een precedence-lock kan de ene smart group voorrang krijgen op de andere. Geef er één per situatie die je speakers mag overnemen — Home theater, Deurbel, Feest. Meerdere namen scheid je met komma's; je kunt dit later aanpassen.",
         "data": {
-          "precedence_locks": "Precedence-locks"
+          "precedence_locks": "Precedence-locks",
+          "flavour": "Spelers waar de blueprint op gebouwd wordt"
+        },
+        "data_description": {
+          "flavour": "Kies de integratie waarmee je je speakers daadwerkelijk bedient. De Music Assistant-blueprint laat de equalizer-opties weg, want die doen niets voor zijn spelers."
         }
       }
     },
@@ -19,7 +23,11 @@
         "title": "Precedence-locks",
         "description": "Per naam wordt één schakelaar aangemaakt. Haal je een naam weg, dan verdwijnt de schakelaar — controleer eerst of geen smart group er nog naar verwijst.",
         "data": {
-          "precedence_locks": "Precedence-locks"
+          "precedence_locks": "Precedence-locks",
+          "flavour": "Spelers waar de blueprint op gebouwd wordt"
+        },
+        "data_description": {
+          "flavour": "Kies de integratie waarmee je je speakers daadwerkelijk bedient. De Music Assistant-blueprint laat de equalizer-opties weg, want die doen niets voor zijn spelers."
         }
       }
     }
@@ -80,6 +88,14 @@
     "blueprint_modified": {
       "title": "Een blueprint is met rust gelaten",
       "description": "`{name}` wijkt af van de versie die met deze update meekwam, dus het lijkt erop dat je hem hebt aangepast — hij is niet vervangen.\n\nJe automatiseringen blijven op jouw versie werken. Wil je de nieuwe, verwijder dan `{path}` en herlaad de integratie Sonos Smart Groups."
+    }
+  },
+  "selector": {
+    "flavour": {
+      "options": {
+        "sonos": "Sonos",
+        "music_assistant": "Music Assistant"
+      }
     }
   }
 }

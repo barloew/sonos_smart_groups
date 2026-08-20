@@ -5,7 +5,11 @@
         "title": "Sonos Smart Groups",
         "description": "A precedence lock lets one smart group outrank another. Name one per situation that should be able to take over your speakers — Home theater, Doorbell, Party. Separate several with commas; you can change this later.",
         "data": {
-          "precedence_locks": "Precedence locks"
+          "precedence_locks": "Precedence locks",
+          "flavour": "Players to build the blueprint around"
+        },
+        "data_description": {
+          "flavour": "Pick the integration you actually control your speakers with. The Music Assistant blueprint leaves out the equalizer options, which do nothing for its players."
         }
       }
     },
@@ -19,7 +23,11 @@
         "title": "Precedence locks",
         "description": "One switch is created per name. Removing a name deletes its switch, so check that no smart group still refers to it.",
         "data": {
-          "precedence_locks": "Precedence locks"
+          "precedence_locks": "Precedence locks",
+          "flavour": "Players to build the blueprint around"
+        },
+        "data_description": {
+          "flavour": "Pick the integration you actually control your speakers with. The Music Assistant blueprint leaves out the equalizer options, which do nothing for its players."
         }
       }
     }
@@ -80,6 +88,14 @@
     "blueprint_modified": {
       "title": "A blueprint was left alone",
       "description": "`{name}` differs from the version shipped with this update, so it looks like you edited it and it has not been replaced.\n\nYour automations keep working on your version. To take the new one, delete `{path}` and reload the Sonos Smart Groups integration."
+    }
+  },
+  "selector": {
+    "flavour": {
+      "options": {
+        "sonos": "Sonos",
+        "music_assistant": "Music Assistant"
+      }
     }
   }
 }

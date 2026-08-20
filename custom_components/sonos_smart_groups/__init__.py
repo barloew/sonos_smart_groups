@@ -40,7 +40,13 @@ from .const import (
     ATTR_PRINCIPAL,
     ATTR_TOLERANCE,
     BLUEPRINT_COMPONENT,
+    BLUEPRINT_FILENAME,
+    BLUEPRINT_LANGUAGES,
     BLUEPRINT_TARGET,
+    CONF_FLAVOUR,
+    DEFAULT_FLAVOUR,
+    DEFAULT_LANGUAGE,
+    FLAVOURS,
     ISSUE_BLUEPRINT_MODIFIED,
     DEFAULT_FACTOR,
     DEFAULT_GAP_MS,
@@ -112,7 +118,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up a Sonos Smart Groups entry."""
     hass.data.setdefault(DOMAIN, {}).setdefault("lock", asyncio.Lock())
 
-    await _async_install_blueprints(hass)
+    await _async_install_blueprints(hass, entry)
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     _register_services(hass)
 
@@ -135,105 +141,153 @@ async def _async_update_listener(hass: HomeAssistant, entry: ConfigEntry) -> Non
 # ---------------------------------------------------------------------------
 
 
-async def _async_install_blueprints(hass: HomeAssistant) -> None:
-    """Install the bundled blueprints, and update them when it is safe to.
+def _pick_variant(hass: HomeAssistant, entry: ConfigEntry) -> tuple[str, str]:
+    """Which flavour and language of the blueprint this system should get."""
+    flavour = entry.options.get(
+        CONF_FLAVOUR, entry.data.get(CONF_FLAVOUR, DEFAULT_FLAVOUR)
+    )
+    if flavour not in FLAVOURS:
+        flavour = DEFAULT_FLAVOUR
 
-    The tricky part is telling an untouched file from one the user has edited.
-    Overwriting blindly would throw away their work; never overwriting means a
-    bugfix in the blueprint can only reach them by hand.
+    language = (hass.config.language or DEFAULT_LANGUAGE).split("-")[0].lower()
+    if language not in BLUEPRINT_LANGUAGES:
+        language = DEFAULT_LANGUAGE
 
-    So we remember the SHA-256 of every file we wrote:
+    return flavour, language
 
-        file missing            -> install it
-        hash matches what we wrote -> untouched, safe to replace
-        hash differs            -> edited, leave alone and raise a repair issue
 
-    Deleting the file and reloading the integration always gets the bundled
-    version back.
+async def _async_install_blueprints(hass: HomeAssistant, entry: ConfigEntry) -> None:
+    """Install the blueprint that matches this system, and drop the others.
+
+    We ship one file per flavour and language. Only the matching one is
+    installed, always under the same name, so switching language or flavour
+    replaces it rather than leaving a second copy in the list.
+
+    Telling an untouched file from an edited one is the delicate part.
+    Overwriting blindly destroys the user's work; never overwriting means a fix
+    can only reach them by hand. So the SHA-256 of every file we write is kept
+    in a `Store` under `.storage`:
+
+        file missing               -> install it
+        hash matches the bundled   -> already current
+        hash matches what we wrote -> untouched, replace it
+        hash matches neither       -> edited, leave alone and raise an issue
     """
-    source = Path(__file__).parent / "blueprints"
-    target = Path(hass.config.path(BLUEPRINT_TARGET))
+    flavour, language = _pick_variant(hass, entry)
+    source = Path(__file__).parent / "blueprints" / flavour / f"{language}.yaml"
+    if not source.is_file():
+        source = Path(__file__).parent / "blueprints" / flavour / f"{DEFAULT_LANGUAGE}.yaml"
+    if not source.is_file():
+        _LOGGER.warning("No bundled blueprint found for %s/%s", flavour, language)
+        return
+
+    target_dir = Path(hass.config.path(BLUEPRINT_TARGET))
+    destination = target_dir / BLUEPRINT_FILENAME
 
     store: Store[dict[str, str]] = Store(hass, STORAGE_VERSION, STORAGE_KEY)
     known: dict[str, str] = await store.async_load() or {}
 
-    def _sync() -> tuple[dict[str, str], list[str], list[str]]:
-        """Do the filesystem work. Returns (hashes, installed, skipped)."""
-        if not source.is_dir():
-            return known, [], []
+    def _sync() -> tuple[str | None, bool, bool]:
+        """Returns (new hash, did we write, should we report it as edited)."""
+        target_dir.mkdir(parents=True, exist_ok=True)
+        bundled = source.read_bytes()
+        bundled_hash = hashlib.sha256(bundled).hexdigest()
 
-        target.mkdir(parents=True, exist_ok=True)
-        hashes = dict(known)
-        installed: list[str] = []
-        skipped: list[str] = []
+        if not destination.exists():
+            destination.write_bytes(bundled)
+            return bundled_hash, True, False
 
-        for item in sorted(source.glob("*.yaml")):
-            bundled = item.read_bytes()
-            bundled_hash = hashlib.sha256(bundled).hexdigest()
-            destination = target / item.name
+        current_hash = hashlib.sha256(destination.read_bytes()).hexdigest()
+        if current_hash == bundled_hash:
+            return bundled_hash, False, False
 
-            if not destination.exists():
-                destination.write_bytes(bundled)
-                hashes[item.name] = bundled_hash
-                installed.append(item.name)
-                continue
+        if known.get(BLUEPRINT_FILENAME) == current_hash:
+            destination.write_bytes(bundled)
+            return bundled_hash, True, False
 
-            current_hash = hashlib.sha256(destination.read_bytes()).hexdigest()
-
-            if current_hash == bundled_hash:
-                hashes[item.name] = bundled_hash  # already up to date
-                continue
-
-            if known.get(item.name) == current_hash:
-                # Untouched since we wrote it, so this is our own update.
-                destination.write_bytes(bundled)
-                hashes[item.name] = bundled_hash
-                installed.append(item.name)
-                continue
-
-            # Edited locally, or installed before we started keeping hashes.
-            skipped.append(item.name)
-
-        return hashes, installed, skipped
+        return None, False, True
 
     try:
-        hashes, installed, skipped = await hass.async_add_executor_job(_sync)
+        new_hash, wrote, edited = await hass.async_add_executor_job(_sync)
     except OSError as err:  # pragma: no cover - filesystem dependent
-        _LOGGER.warning("Could not install blueprints: %s", err)
+        _LOGGER.warning("Could not install the blueprint: %s", err)
         return
 
-    if hashes != known:
-        await store.async_save(hashes)
+    if new_hash and known.get(BLUEPRINT_FILENAME) != new_hash:
+        await store.async_save({**known, BLUEPRINT_FILENAME: new_hash})
 
-    if installed:
+    if wrote:
         await _async_reset_blueprint_cache(hass)
-        _LOGGER.info("Installed or updated blueprints: %s", ", ".join(installed))
+        _LOGGER.info(
+            "Installed the %s blueprint in %s", flavour.replace("_", " "), language
+        )
 
-    _async_report_skipped(hass, skipped)
+    ir.async_delete_issue(hass, DOMAIN, ISSUE_BLUEPRINT_MODIFIED)
+    if edited:
+        _async_report_skipped(hass)
+
+    await _async_remove_stale_blueprints(hass)
+
+
+async def _async_remove_stale_blueprints(hass: HomeAssistant) -> None:
+    """Remove blueprints from earlier versions that shipped one file per name.
+
+    Home Assistant refuses to delete a blueprint an automation still uses, so
+    anything still in service simply stays put.
+    """
+    domain_blueprints = (hass.data.get(BLUEPRINT_COMPONENT) or {}).get(
+        AUTOMATION_COMPONENT
+    )
+    if domain_blueprints is None:
+        return
+
+    folder = Path(hass.config.path(BLUEPRINT_TARGET))
+
+    def _stale() -> list[str]:
+        if not folder.is_dir():
+            return []
+        return [
+            item.name
+            for item in sorted(folder.glob("*.yaml"))
+            if item.name != BLUEPRINT_FILENAME
+        ]
+
+    try:
+        stale = await hass.async_add_executor_job(_stale)
+    except OSError:  # pragma: no cover - filesystem dependent
+        return
+
+    for name in stale:
+        relative = f"{Path(BLUEPRINT_TARGET).name}/{name}"
+        try:
+            await domain_blueprints.async_remove_blueprint(relative)
+        except Exception:  # noqa: BLE001 - in use, missing, or not ours
+            _LOGGER.debug("Left %s in place", name, exc_info=True)
+        else:
+            _LOGGER.info("Removed the now-unused blueprint %s", name)
 
 
 @callback
-def _async_report_skipped(hass: HomeAssistant, skipped: list[str]) -> None:
-    """Tell the user about blueprints we did not dare to overwrite."""
-    for name in skipped:
-        ir.async_create_issue(
-            hass,
-            DOMAIN,
-            f"{ISSUE_BLUEPRINT_MODIFIED}_{name}",
-            is_fixable=False,
-            severity=ir.IssueSeverity.WARNING,
-            translation_key=ISSUE_BLUEPRINT_MODIFIED,
-            translation_placeholders={
-                "name": name,
-                "path": f"{BLUEPRINT_TARGET}/{name}",
-            },
-        )
-        _LOGGER.info(
-            "Left %s alone: it differs from the version shipped with this "
-            "integration, so it looks edited. Delete it and reload the "
-            "integration to get the bundled version",
-            name,
-        )
+def _async_report_skipped(hass: HomeAssistant) -> None:
+    """Tell the user we did not dare to overwrite their edited blueprint."""
+    ir.async_create_issue(
+        hass,
+        DOMAIN,
+        ISSUE_BLUEPRINT_MODIFIED,
+        is_fixable=False,
+        severity=ir.IssueSeverity.WARNING,
+        translation_key=ISSUE_BLUEPRINT_MODIFIED,
+        translation_placeholders={
+            "name": BLUEPRINT_FILENAME,
+            "path": f"{BLUEPRINT_TARGET}/{BLUEPRINT_FILENAME}",
+        },
+    )
+    _LOGGER.info(
+        "Left %s alone: it differs from the version shipped with this "
+        "integration, so it looks edited. Delete it and reload the integration "
+        "to get the bundled version",
+        BLUEPRINT_FILENAME,
+    )
 
 
 async def _async_reset_blueprint_cache(hass: HomeAssistant) -> None:
