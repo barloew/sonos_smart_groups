@@ -5,6 +5,25 @@ that way, and what to reach for when the standard settings are not enough.
 
 ---
 
+## A note on words
+
+Sonos uses these precisely, and so does this document.
+
+| Term | Meaning |
+|---|---|
+| **speaker** | one physical unit |
+| **room** | one addressable thing in the Sonos app — and one `media_player` in Home Assistant. May be a single speaker, or several bonded ones |
+| **bonded** | speakers fused into a room: a stereo pair, a home theater set with its surrounds and Sub, or a zone. They lose their own names and cannot be addressed separately |
+| **group** | rooms playing the same thing together. Temporary, and what `group_members` describes |
+| **smart group** | a rule about how rooms behave together, which is what this integration adds |
+
+Leaders and followers are therefore **rooms**. A Sub is bonded, never a room of
+its own, so it can never be a follower — it plays along with whatever its room
+is doing. Its settings *can* be mirrored, because Sonos exposes those on the
+room: `sub_enabled`, `sub_gain` and `sub_crossover`.
+
+---
+
 ## Contents
 
 - [Why this is not just an automation](#why-this-is-not-just-an-automation)
@@ -206,9 +225,11 @@ a blueprint-only feature.
 Numeric values are clamped to the target's own `min` and `max` and rounded to
 its `step` before writing, so speakers with different ranges do not fight.
 
-Not every speaker has every control — subwoofer gain and crossover in
-particular only appear on some models. Missing controls are skipped without
-complaint.
+Not every room has every control. Sub gain and crossover only appear on a room
+that actually has a Sub bonded to it, and surround levels only on a home
+theater set. Missing controls are skipped without complaint, which is why it is
+safe to tick surround for a group that mixes a soundbar with bookshelf
+speakers.
 
 ---
 
@@ -479,7 +500,7 @@ only on a Connect, Port, Amp or Play:5.
 
 **Ad-hoc groups are not preserved.** See *Why rebuilding beats snapshots*.
 
-**Sonos has its own opinions.** The per-speaker **TV autoplay** and **Ungroup
+**Sonos has its own opinions.** The per-room **TV autoplay** and **Ungroup
 on autoplay** switches act independently of anything here. If groups reassemble
 without an automation running, look there first.
 

@@ -14,11 +14,10 @@ grouped them.
 
 Say your kitchen opens onto the living room. The kitchen speaker sits at head
 height and the living room ones are across the floor, so the kitchen needs a
-little more volume and a little more bass to sound like one room. When a film
-starts, the home theater should borrow the sub and some of those living room
-speakers, and the kitchen should let go — then get everything back when the
-film ends. And the kid's room should switch to Night Sound once someone is
-asleep in it.
+little more volume and a little more bass before the two sound like one space.
+When a film starts, the home theater should take the living room with it and
+the kitchen should let go — then hand everything back when the film ends. And
+the kid's room should switch to Night Sound once someone is asleep in it.
 
 Those are relationships, not groups. Sonos Smart Groups is where you write them
 down once, and stop thinking about them.
@@ -38,17 +37,17 @@ head height. A smart group gives every follower a **volume factor**, so the
 living room sits at 1.3 and stays there. Move the kitchen slider and the whole
 floor follows, each room keeping its balance.
 
-**② Your home theater and ground floor music share some of the same speakers.**
+**② Your home theater and your ground-floor music want the same rooms.**
 Mark the home theater as a **superior** smart group and it takes precedence
-when the TV starts: the music group hands the subwoofer and its speakers over and rebuilds itself
-when the movie ends. No scripts, no snapshots, no speakers and sub left behind in the
+when the TV starts: the music group hands the living room over and rebuilds
+itself when the film ends. No scripts, no snapshots, no room left behind in the
 wrong group.
 
-**③ Grouped speakers sound different from each other.**
-Sonos keeps bass, treble, balance, loudness and the subwoofer settings *per
-speaker*, so a group can still sound like several systems. A smart group copies
-them across — and bass and treble get their own per-speaker factor, so the one
-in the corner can run 0.8 and stop booming.
+**③ Grouped rooms sound different from each other.**
+Sonos keeps bass, treble, balance, loudness and the Sub settings *per room*, so
+a group can still sound like several systems rather than one. A smart group
+copies them across — and bass and treble get their own per-room factor, so the
+room in the corner can run 0.8 and stop booming.
 
 **④ You want music to start on its own.**
 Motion in the gym, a time of day, an NFC tag by the door — a smart group can
@@ -68,9 +67,9 @@ together without you.
 
 ### Why not group them based on Home Assistant automation?
 
-You can, and for two speakers that should always play together, a short automation is fine.
+You can, and for two rooms that should always play together, a short automation is fine.
 
-It gets harder than it looks as soon as speakers have to follow each other. You set one, it sets the other, which sets the first one back — and now they argue. Add a second group and their commands land on top of each other. Drag a volume slider and you have sent thirty commands instead of one. And the settings that make a group actually sound like one system — bass, treble, surround — cannot be reached from an automation at all.
+It gets harder than it looks as soon as rooms have to follow each other. You set one, it sets the other, which sets the first one back — and now they argue. Add a second group and their commands land on top of each other. Drag a volume slider and you have sent thirty commands instead of one. And the settings that make a group actually sound like one system — bass, treble, surround — cannot be reached from an automation at all.
 
 None of that is hard to solve once. It is just tedious to solve every time. Sonos Smart Groups has solved it, so a smart group is a form you fill in and then forget about.
 
@@ -83,10 +82,10 @@ fifth — it sits on top of them.
 
 | | What it is | Survives a reboot | Rooms keep their names |
 |---|---|---|---|
-| **Stereo pair** | two speakers become one, left and right | yes | no |
-| **Home theater set** | soundbar with surrounds and a sub | yes | no |
+| **Stereo pair** | two speakers become one room, left and right | yes | no |
+| **Home theater set** | soundbar, surrounds and Sub as one room | yes | no |
 | **Group** | rooms playing the same thing, right now | no | yes |
-| **Zone** | speakers bonded into one room | yes | no |
+| **Zone** | two or more speakers bonded into one room | yes | no |
 | **Smart group** | a rule about how rooms behave together | yes, it is a rule | yes |
 
 **Zones** are the newest and the most often misunderstood. A zone bonds
@@ -171,7 +170,7 @@ speaker is the one people actually touch.
 3. **Leader**: Kitchen
 4. **Followers**:
 
-   | Speaker | Volume factor | Add to group |
+   | Room | Volume factor | Add to group |
    |---|---|---|
    | Dining room | 1.0 | yes |
    | Living room | 1.3 | yes |
@@ -193,10 +192,10 @@ soundbar with bookshelf speakers.
 
 ## Taking precedence
 
-The home theater is a soundbar, a sub and a subset of speakers in the living room — part of the same
-open space as the kitchen and dining room. When a movie starts you want the sub and the
-living room speakers with it and the music group to let go. When the movie ends,
-the music group should come back exactly as it was.
+The home theater is a soundbar with a Sub — one Sonos room, in the same open
+space as the kitchen and dining room. When a film starts you want the living
+room with it and the music group to let go. When the film ends, the music group
+should come back exactly as it was.
 
 **The superior smart group** — a second automation from the same blueprint:
 
@@ -291,7 +290,7 @@ subscriptions fail, Home Assistant polls every 30 seconds instead. Look for
 between your speakers and Home Assistant.
 
 **Groups reassemble by themselves after the TV stops** — Sonos has its own
-**TV autoplay** and **Ungroup on autoplay** switches, one pair per speaker.
+**TV autoplay** and **Ungroup on autoplay** switches, one pair per room.
 Check those before blaming an automation.
 
 **Equalizer settings are not copied** — check that both speakers actually have
@@ -312,14 +311,20 @@ read a trace. Bug reports are welcome in the [issue tracker][issues].
 ## Good to know
 
 - **One direction per automation.** A smart group watches its leader, never its
-  followers. Two speakers that should follow each other need two automations
+  followers. Two rooms that should follow each other need two automations
   with reciprocal factors — `1.25` one way, `0.8` the other. That constraint is
   what makes the loop protection reliable.
 - **Rebuilding does not use snapshots.** A smart group knows how it should
   look, so it re-applies its own definition. `sonos.snapshot` does not restore
   group topology reliably when the snapshotted speaker was already grouped,
   which is exactly the situation precedence creates.
-- **Ad-hoc groups are not preserved.** If you rearrange speakers by hand in the
+- **A Sub has no room of its own.** Sonos bonds it to one room, along with the
+  surrounds of a home theater set and the halves of a stereo pair, so it never
+  appears as something you can pick. It simply plays along with whatever its
+  room is doing — hand that room to another group and the Sub goes with it.
+  What a smart group *can* copy is the Sub's settings: whether it is on, and
+  its gain and crossover.
+- **Ad-hoc groups are not preserved.** If you regroup rooms by hand in the
   Sonos app, a smart group rebuilds itself as configured, not as you left it.
 - **Equalizer copying works in every language.** Entity IDs are translated;
   the identifiers underneath are not. The [advanced guide][advanced] explains
