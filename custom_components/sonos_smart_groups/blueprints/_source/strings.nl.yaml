@@ -1,90 +1,235 @@
-# Dutch strings for the blueprint.
+# Nederlandse strings voor de blueprint.
 #
-# Keys are the exact English text as it appears in
-# blueprints/_source/sonos_smart_group.yaml; values are the translation.
-# tools/build_blueprints.py replaces them literally, longest first, and warns
-# about any key it cannot find — so a rename in the source shows up as a
-# warning rather than a silently untranslated field.
+# De sleutels verwijzen naar de plek in blueprints/_source/sonos_smart_group.yaml;
+# de waarden zijn de vertaling. tools/build_blueprints.py waarschuwt over elke
+# sleutel die het niet terugvindt, dus een hernoeming in de bron valt op in
+# plaats van stilletjes Engels te blijven.
 #
-# Do NOT translate: input keys, !input references, trigger ids, entity ids, or
-# the `value:` of a select option. Those are structural.
+# NIET vertalen: invoersleutels, !input-namen, trigger-ids en de `value:` van
+# een keuzeoptie. Die zijn structureel.
 
-# ── Blueprint ────────────────────────────────────────────────────────────
-"Sonos Smart Group": "Sonos Smart Group"
+blueprint:
+  name: Sonos Smart Group
+  description: |-
+    Een smart group is één leader-kamer met een willekeurig aantal followers die zich aan hem aanpassen.
 
-# ── Sections ─────────────────────────────────────────────────────────────
-"1 · The smart group": "1 · De smart group"
-"2 · What followers copy": "2 · Wat followers overnemen"
-"3 · When the smart group forms": "3 · Wanneer de groep zich vormt"
-"4 · Precedence": "4 · Voorrang"
-"5 · Starting by itself": "5 · Vanzelf starten"
-"6 · Fine-tuning": "6 · Fijnafstelling"
+    **Followers nemen over wat jij kiest.** Volume, dempen, bron, afspelen — en als je wilt ook de equalizer- en home theater-instellingen. Volume, lage en hoge tonen kunnen per follower geschaald worden, zodat de kamer aan de andere kant van een open ruimte wat luider staat zonder dat je er ooit nog aan hoeft te denken.
 
-# ── Field names ──────────────────────────────────────────────────────────
-"Leader": "Leader"
-"Followers": "Followers"
-"Playback": "Afspelen"
-"Equalizer": "Equalizer"
-"Home theater": "Home theater"
-"Only while the leader is playing": "Alleen terwijl de leader speelt"
-"Only for this source": "Alleen bij deze bron"
-"When the leader stops": "Wanneer de leader stopt"
-"Only when these are on": "Alleen als deze aan staan"
-"Never while these are on": "Nooit terwijl deze aan staan"
-"Never while these rooms are playing": "Nooit terwijl deze kamers spelen"
-"This smart group is": "Deze smart group is"
-"Precedence lock": "Voorrangsslot"
-"When standing down, this group's rooms should": "Bij het wijken doen de kamers van deze groep dit"
-"When precedence is released": "Wanneer de voorrang wordt vrijgegeven"
-"Wait before releasing precedence": "Wachttijd voor het vrijgeven van voorrang"
-"Hold switch": "Vasthoudschakelaar"
-"Start when": "Starten wanneer"
-"But only if": "Maar alleen als"
-"Play this": "Speel dit af"
-"Or switch to this input": "Of schakel naar deze ingang"
-"Set the leader to this volume": "Zet de leader op dit volume"
-"Then": "Daarna"
-"Settle time": "Bezinktijd"
-"Volume tolerance": "Volumetolerantie"
-"Command gap": "Pauze tussen commando's"
-"Cooldown": "Afkoeltijd"
-"Only when the leader is in charge": "Alleen als de leader de baas is"
-"Extra triggers": "Extra triggers"
-"Extra conditions": "Extra voorwaarden"
-"Run before": "Vooraf uitvoeren"
-"Run after": "Achteraf uitvoeren"
+    **Smart groups kunnen voorrang op elkaar krijgen.** Markeer er één als *superior* en die gaat voor: subordinate groepen staan hun kamers af en krijgen ze daarna terug. Een home theater die de woonkamer meeneemt zolang de film loopt is het klassieke geval.
 
-# ── Select options ───────────────────────────────────────────────────────
-"Volume — scaled by each follower's factor": "Volume — geschaald met de factor van elke follower"
-"Mute": "Dempen"
-"Source — ungrouped followers only": "Bron — alleen voor ongegroepeerde followers"
-"Play and pause — ungrouped followers only": "Afspelen en pauzeren — alleen voor ongegroepeerde followers"
-"Crossfade": "Crossfade"
-"Bass": "Lage tonen"
-"Treble": "Hoge tonen"
-"Balance": "Balans"
-"Loudness": "Loudness"
-"Subwoofer on/off": "Subwoofer aan/uit"
-"Subwoofer gain": "Subwoofer-versterking"
-"Subwoofer crossover": "Subwoofer-crossover"
-"Surround on/off": "Surround aan/uit"
-"Surround level": "Surroundniveau"
-"Music surround level": "Surroundniveau voor muziek"
-"Full volume for music surround": "Vol volume voor muzieksurround"
-"Speech enhancement": "Spraakverbetering"
-"Night sound": "Nachtgeluid"
-"Audio delay (lip sync)": "Audiovertraging (lipsynchronisatie)"
-"Leave everything as it is": "Laat alles zoals het is"
-"Release the followers from the group": "Haal de followers uit de groep"
-"Pause the followers": "Pauzeer de followers"
-"Not involved in precedence": "Doet niet mee aan voorrang"
-"Superior — takes precedence over others": "Superior — krijgt voorrang op andere groepen"
-"Subordinate — stands down for the superior group": "Subordinate — wijkt voor de superior groep"
-"Join the superior group": "Sluit zich aan bij de superior groep"
-"Leave the group and fall silent": "De groep verlaten en stil vallen"
-"Pause where they are": "Pauzeren waar ze zijn"
-"Rebuild this smart group as defined": "Deze smart group opnieuw opbouwen zoals ingesteld"
-"Release all rooms": "Alle kamers vrijgeven"
-"Start playing": "Beginnen met afspelen"
-"Pause": "Pauzeren"
-"Only set the source and volume": "Alleen de bron en het volume instellen"
+    **Smart groups kunnen zichzelf starten.** Op een bewegingssensor, op een tijdstip, op elke trigger die je kunt bedenken — met een bron of met een specifieke afspeellijst, album, artiest of zender.
+
+    ---
+
+    Eén automatisering beschrijft één smart group. Twee kamers die elkaar beide kanten op moeten volgen hebben er twee nodig, één per richting.
+
+    Vereist de integratie Sonos Smart Groups.
+
+sections:
+  group_section:
+    name: 1 · De smart group
+    description: |-
+      Wie leidt, en wie volgt. Alleen de leader wordt in de gaten gehouden — followers starten zelf nooit iets, en dat is precies wat voorkomt dat twee kamers elkaar gaan achtervolgen.
+    inputs:
+      leader:
+        name: Leader
+        description: |-
+          De kamer waar de rest zich naar richt. Kies degene die je in de praktijk aanraakt als je de muziek wilt veranderen — de keuken dus, niet het kantoor.
+      followers:
+        name: Followers
+        description: |-
+          Eén regel per kamer.
+
+          **Volumefactor** is ten opzichte van de leader. 1.0 houdt ze gelijk, 1.4 maakt de follower merkbaar luider, 0.8 juist zachter. In een open woonkamer wil de kamer het verst van de bank meestal 1.2 tot 1.5.
+
+          **Lage- en hoge-tonenfactor** werken hetzelfde en doen alleen iets als je in sectie 2 het overnemen van de equalizer aanzet. Laat ze op 1.0 tenzij een kamer zijn speakers in een hoek of tegen glas heeft staan.
+
+          **Aan de groep toevoegen** trekt de kamer in de groep van de leader, zodat ze hetzelfde synchroon afspelen. Laat het uit voor een follower die alleen het volume moet volgen terwijl hij iets anders speelt.
+        fields:
+          speaker: Kamer
+          volume_factor: Volumefactor
+          join: Aan de groep toevoegen
+          bass_factor: Factor lage tonen
+          treble_factor: Factor hoge tonen
+
+  copy_section:
+    name: 2 · Wat followers overnemen
+    description: |-
+      Volume en dempen passen bij vrijwel elke smart group. De rest staat er voor als je het nodig hebt.
+
+      Instellingen die een kamer niet heeft worden stilzwijgend overgeslagen, dus je kunt surround gerust aanvinken voor een groep waarin een soundbar en boekenplankspeakers samen zitten.
+    inputs:
+      copy_playback:
+        name: Afspelen
+        description: |-
+          Bron en afspelen gelden alleen voor followers die buiten de groep blijven — kamers binnen een groep volgen hun leader daarin al.
+        options:
+          volume: Volume — geschaald met de factor van elke follower
+          mute: Dempen
+          source: Bron — alleen voor ongegroepeerde followers
+          transport: Afspelen en pauzeren — alleen voor ongegroepeerde followers
+          cross_fade: Crossfade
+      copy_equalizer:
+        name: Equalizer
+        description: |-
+          Sonos bewaart deze per kamer. Ze overnemen is wat een groep als één systeem laat klinken in plaats van als een paar losse.
+        options:
+          bass: Lage tonen
+          treble: Hoge tonen
+          balance: Balans
+          loudness: Loudness
+          sub_enabled: Subwoofer aan/uit
+          sub_gain: Subwoofer-versterking
+          sub_crossover: Subwoofer-crossover
+      copy_home_theater:
+        name: Home theater
+        description: |-
+          Alleen soundbars en amps hebben deze. Surroundinstellingen tussen twee soundbars kopiëren is ongebruikelijk; meestal laat je dit leeg en laat je het home theater ze zelf beheren.
+        options:
+          surround_enabled: Surround aan/uit
+          surround_level: Surroundniveau
+          music_surround_level: Surroundniveau voor muziek
+          surround_mode: Vol volume voor muzieksurround
+          dialog_level: Spraakverbetering
+          night_mode: Nachtgeluid
+          audio_delay: Audiovertraging (lipsynchronisatie)
+
+  when_section:
+    name: 3 · Wanneer de groep zich vormt
+    description: |-
+      Standaard vormt de groep zich zodra de leader begint te spelen, en dat is wat de meeste mensen willen.
+    inputs:
+      require_playing:
+        name: Alleen terwijl de leader speelt
+        description: |-
+          Zet dit uit als followers het volume van de leader ook moeten volgen wanneer er niets speelt.
+      required_source:
+        name: Alleen bij deze bron
+        description: |-
+          Leeg laten voor elke bron. Sonos noemt zijn ingangen `TV`, `Line-in`, `AirPlay` en `Spotify Connect`; een line-in die vanuit een andere kamer gedeeld wordt verschijnt onder de naam van díé kamer. Gebruik dit als dezelfde kamer zich anders moet gedragen afhankelijk van wat er speelt — één smart group voor de tv, een andere voor muziek.
+      on_leader_stop:
+        name: Wanneer de leader stopt
+        options:
+          nothing: Laat alles zoals het is
+          unjoin: Haal de followers uit de groep
+          pause: Pauzeer de followers
+      require_on:
+        name: Alleen als deze aan staan
+        description: |-
+          Elke entiteit hier moet aan staan. Een goede plek voor een hoofdschakelaar waarmee je al je smart groups in één keer stillegt.
+      block_if_on:
+        name: Nooit terwijl deze aan staan
+      block_if_playing:
+        name: Nooit terwijl deze kamers spelen
+        description: |-
+          Kamers die boven deze groep gaan. Meestal overbodig zodra je voorrangssloten gebruikt.
+
+  precedence_section:
+    name: 4 · Voorrang
+    description: |-
+      Hiermee kan de ene smart group de andere overtroeven. Sla deze sectie over als je groepen nooit elkaars kamers hoeven te lenen.
+
+      Een **superior** groep krijgt voorrang zodra zijn leader begint te spelen, en die leader wordt de *principal*. **Subordinate** groepen wijken, staan hun kamers af, en nemen ze daarna weer terug.
+
+      Maak eerst een slot aan: Instellingen → Apparaten en diensten → Sonos Smart Groups → Configureren.
+    inputs:
+      precedence_role:
+        name: Deze smart group is
+        description: |-
+          **Superior** — krijgt voorrang zodra zijn leader begint te spelen, en andere groepen maken plaats.
+
+          **Subordinate** — staat zijn kamers af aan wie het slot vasthoudt, en neemt ze daarna terug.
+        options:
+          none: Doet niet mee aan voorrang
+          superior: Superior — krijgt voorrang op andere groepen
+          subordinate: Subordinate — wijkt voor de superior groep
+      precedence_lock:
+        name: Voorrangsslot
+        description: Een schakelaar uit de integratie Sonos Smart Groups.
+      stand_down_action:
+        name: Bij het wijken doen de kamers van deze groep dit
+        options:
+          join_principal: Sluiten zich aan bij de superior groep
+          unjoin: De groep verlaten en stil vallen
+          pause: Pauzeren waar ze zijn
+      on_precedence_end:
+        name: Wanneer de voorrang wordt vrijgegeven
+        description: |-
+          Opnieuw opbouwen is meestal het juiste: een smart group weet precies hoe hij eruit hoort te zien, dus hij vormt zichzelf gewoon opnieuw. Er komt geen snapshot aan te pas.
+        options:
+          rebuild: Deze smart group opnieuw opbouwen zoals ingesteld
+          keep: Laat alles zoals het is
+          release: Alle kamers vrijgeven
+      precedence_timeout:
+        name: Wachttijd voor het vrijgeven van voorrang
+        description: |-
+          Als de principal pauzeert wordt de voorrang niet meteen losgelaten — een korte wachttijd voorkomt dat een pauze voor de deurbel de hele opstelling uit elkaar trekt. Zet op 0 om los te laten zodra het afspelen stopt.
+      hold_switch:
+        name: Vasthoudschakelaar
+        description: |-
+          Zolang deze aan staat wordt de voorrang nooit vrijgegeven, hoe lang er ook gepauzeerd wordt. Handig voor een schakelaar "filmavond".
+
+  autostart_section:
+    name: 5 · Vanzelf starten
+    description: |-
+      Laat de leader uit zichzelf beginnen. Laat de triggers leeg om dit helemaal over te slaan.
+    inputs:
+      start_triggers:
+        name: Starten wanneer
+        description: |-
+          Elke trigger die je wilt — een bewegingssensor, een lamp die aangaat, een tijdstip, een agenda-afspraak, een NFC-tag.
+      start_conditions:
+        name: Maar alleen als
+      start_media:
+        name: Speel dit af
+        description: |-
+          Opent de mediabrowser: je Sonos-favorieten, je lokale muziekbibliotheek, en Spotify of Plex als je die integraties gebruikt.
+
+          Favorieten zijn de toegang tot al het andere. Apple Music, Tidal, TuneIn en Sonos Radio kun je niet doorbladeren vanuit Home Assistant, maar wat je één keer in de Sonos-app als favoriet markeert verschijnt hier.
+
+          Laat leeg als je alleen van ingang wilt wisselen — gebruik daarvoor het veld hieronder.
+      start_source:
+        name: Of schakel naar deze ingang
+        description: |-
+          Wordt alleen gebruikt als je hierboven niets kiest. `TV` voor de eigen ingang van een soundbar; een line-in die vanuit een andere kamer gedeeld wordt verschijnt onder de naam van die kamer.
+      start_volume:
+        name: Zet de leader op dit volume
+        description: 0 laat het volume ongemoeid.
+      start_action:
+        name: Daarna
+        options:
+          play: Beginnen met afspelen
+          pause: Pauzeren
+          nothing: Alleen de bron en het volume instellen
+
+  tuning_section:
+    name: 6 · Fijnafstelling
+    description: |-
+      De standaardwaarden bevallen vrijwel iedereen. Kom hier pas terug als iets traag, schokkerig of te gretig aanvoelt.
+    inputs:
+      debounce:
+        name: Bezinktijd
+        description: |-
+          Hoe lang het volume van de leader stil moet staan voordat de followers meebewegen. Eén seconde maakt van het slepen aan een schuif één aanpassing. Zet op 0 voor de snelste reactie op knoppen van een afstandsbediening.
+      tolerance:
+        name: Volumetolerantie
+        description: |-
+          Verschillen kleiner dan dit worden met rust gelaten. Dit is wat voorkomt dat twee kamers elkaar heen en weer duwen. 0,5 laat elke afzonderlijke volumestap door.
+      gap_ms:
+        name: Pauze tussen commando's
+        description: Wachttijd na elk commando. Verhoog dit als het afspelen hapert.
+      cooldown:
+        name: Afkoeltijd
+        description: Minimale tijd tussen twee uitvoeringen. 0 schakelt het uit.
+      only_when_coordinator:
+        name: Alleen als de leader de baas is
+        description: |-
+          Houdt deze smart group stil zolang zijn leader zelf iemand anders volgt. Laat aan staan tenzij je weet dat je het anders wilt.
+      extra_triggers:
+        name: Extra triggers
+      extra_conditions:
+        name: Extra voorwaarden
+      before_actions:
+        name: Vooraf uitvoeren
+      after_actions:
+        name: Achteraf uitvoeren
