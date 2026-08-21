@@ -12,21 +12,22 @@ SONOS_DOMAIN = "sonos"
 
 # Config / options keys
 CONF_LOCKS = "precedence_locks"
-CONF_FLAVOUR = "flavour"
+CONF_CONTROLLER = "controller"
 
-# Which set of players the blueprint should be built around. Both work, but a
-# blueprint tailored to one keeps the form free of controls that would do
-# nothing — Music Assistant exposes no equalizer entities for Sonos players.
-FLAVOUR_SONOS = "sonos"
-FLAVOUR_MUSIC_ASSISTANT = "music_assistant"
-FLAVOURS = [FLAVOUR_SONOS, FLAVOUR_MUSIC_ASSISTANT]
-DEFAULT_FLAVOUR = FLAVOUR_SONOS
+# Which music service and controlling media player the blueprint is built
+# around. Both work, but a blueprint tailored to one keeps the form free of
+# controls that would do nothing: Music Assistant exposes no equalizer
+# entities for Sonos players.
+CONTROLLER_SONOS = "sonos"
+CONTROLLER_MUSIC_ASSISTANT = "music_assistant"
+CONTROLLERS = [CONTROLLER_SONOS, CONTROLLER_MUSIC_ASSISTANT]
+DEFAULT_CONTROLLER = CONTROLLER_SONOS
 
 # Languages we ship a translated blueprint for. English is the fallback.
 BLUEPRINT_LANGUAGES = ["en", "nl", "de", "fr"]
 DEFAULT_LANGUAGE = "en"
 
-# blueprints/<flavour>/<language>.yaml inside the integration, installed as
+# blueprints/<controller>/<language>.yaml inside the integration, installed as
 # sonos_smart_group.yaml in the user's blueprint folder.
 BLUEPRINT_FILENAME = "sonos_smart_group.yaml"
 

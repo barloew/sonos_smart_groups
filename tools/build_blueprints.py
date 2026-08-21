@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Build the shipped blueprint variants.
 
-Two flavours times four languages is eight files, and editing eight files by
+Two controllers times four languages is eight files, and editing eight files by
 hand is how a fix ends up applied to six of them. They are generated instead,
 from one source blueprint plus one string file per language:
 
@@ -18,7 +18,7 @@ keyed by *where a string lives* - section, input, select option - instead of by
 the English wording. Long descriptions can then be rewritten freely, and a
 rename in the source shows up as a warning instead of a silently English field.
 
-The Music Assistant flavour drops the equalizer and home theater inputs, which
+The Music Assistant controller drops the equalizer and home theater inputs, which
 would offer nothing: Music Assistant exposes no such entities for Sonos players.
 
     python3 tools/build_blueprints.py             # write the variants
@@ -40,7 +40,7 @@ BASE = ROOT / "custom_components" / "sonos_smart_groups" / "blueprints"
 SOURCE = BASE / "_source" / "sonos_smart_group.yaml"
 
 LANGUAGES = ["en", "nl", "de", "fr"]
-FLAVOURS = ["sonos", "music_assistant"]
+CONTROLLERS = ["sonos", "music_assistant"]
 
 # Inputs that only make sense with the Sonos integration installed.
 SONOS_ONLY_INPUTS = ["copy_equalizer", "copy_home_theater"]
@@ -214,22 +214,22 @@ def strip_sonos_only(blueprint: dict) -> None:
 def build() -> dict:
     out: dict[Path, str] = {}
 
-    for flavour in FLAVOURS:
+    for controller in CONTROLLERS:
         for language in LANGUAGES:
             blueprint = _load(SOURCE)
 
-            if flavour != "sonos":
+            if controller != "sonos":
                 strip_sonos_only(blueprint)
 
             if language != "en":
                 path = SOURCE.parent / f"strings.{language}.yaml"
                 if not path.is_file():
-                    print(f"  skipping {flavour}/{language}: no {path.name}")
+                    print(f"  skipping {controller}/{language}: no {path.name}")
                     continue
                 strings = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
                 translate(blueprint, strings, language)
 
-            out[BASE / flavour / f"{language}.yaml"] = HEADER + _dump(blueprint)
+            out[BASE / controller / f"{language}.yaml"] = HEADER + _dump(blueprint)
 
     return out
 

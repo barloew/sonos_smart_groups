@@ -3,13 +3,13 @@
     "step": {
       "user": {
         "title": "Sonos Smart Groups",
-        "description": "Met een precedence-lock kan de ene smart group voorrang krijgen op de andere. Geef er één per situatie die je speakers mag overnemen — Home theater, Deurbel, Feest. Meerdere namen scheid je met komma's; je kunt dit later aanpassen.",
+        "description": "Met een voorrangsschakelaar kan de ene slimme groep voorrang krijgen op de andere. Geef er één per situatie die je kamers mag overnemen — Thuisbioscoop, Deurbel, Feest. Meerdere namen scheid je met komma’s; je kunt dit later aanpassen.",
         "data": {
-          "precedence_locks": "Precedence-locks",
-          "flavour": "Spelers waar de blueprint op gebouwd wordt"
+          "precedence_locks": "Voorrangsschakelaars",
+          "controller": "Muziekdienst en bedienende mediaspeler"
         },
         "data_description": {
-          "flavour": "Kies de integratie waarmee je je speakers daadwerkelijk bedient. De Music Assistant-blueprint laat de equalizer-opties weg, want die doen niets voor zijn spelers."
+          "controller": "Waarmee je je speakers daadwerkelijk bedient. De Music Assistant-blueprint laat de equalizer- en thuisbioscoop-opties weg, omdat Music Assistant die entiteiten niet aanbiedt voor Sonos-spelers."
         }
       }
     },
@@ -20,78 +20,78 @@
   "options": {
     "step": {
       "init": {
-        "title": "Precedence-locks",
-        "description": "Per naam wordt één schakelaar aangemaakt. Haal je een naam weg, dan verdwijnt de schakelaar — controleer eerst of geen smart group er nog naar verwijst.",
+        "title": "Voorrangsschakelaars",
+        "description": "Per ingegeven naam wordt één voorrangsschakelaar aangemaakt. Er kunnen meerdere, komma-gescheiden namen worden ingegeven. Haal je een naam weg, dan verdwijnt de schakelaar — controleer eerst of geen slimme groep er nog naar verwijst.",
         "data": {
-          "precedence_locks": "Precedence-locks",
-          "flavour": "Spelers waar de blueprint op gebouwd wordt"
+          "precedence_locks": "Voorrangsschakelaars",
+          "controller": "Muziekdienst en bedienende mediaspeler"
         },
         "data_description": {
-          "flavour": "Kies de integratie waarmee je je speakers daadwerkelijk bedient. De Music Assistant-blueprint laat de equalizer-opties weg, want die doen niets voor zijn spelers."
+          "controller": "Waarmee je je speakers daadwerkelijk bedient. De Music Assistant-blueprint laat de equalizer- en thuisbioscoop-opties weg, omdat Music Assistant die entiteiten niet aanbiedt voor Sonos-spelers."
         }
       }
     }
   },
   "services": {
     "apply": {
-      "name": "Smart group toepassen",
-      "description": "Spiegel een leader naar zijn followers.",
+      "name": "Slimme groep toepassen",
+      "description": "Wijs een groepsleider toe aan zijn volgers.",
       "fields": {
         "leader": {
-          "name": "Leader",
-          "description": "De speaker waarvan de followers hun instellingen overnemen."
+          "name": "Leider",
+          "description": "De leidende kamer waarvan de volgers hun instellingen overnemen."
         },
         "followers": {
-          "name": "Followers",
-          "description": "Speakers met hun factoren en wel/niet groeperen."
+          "name": "Volgers",
+          "description": "Deze kamers met hun verhoudingen en wel/niet groeperen."
         },
         "mirror": {
           "name": "Overnemen",
-          "description": "Welke eigenschappen de followers kopiëren."
+          "description": "Welke eigenschappen de volgers overnemen."
         },
         "tolerance": {
           "name": "Tolerantie",
           "description": "Volumepunten waaronder er niets wordt geschreven."
         },
         "gap_ms": {
-          "name": "Pauze",
+          "name": "Wachttijd",
           "description": "Wachttijd na elke schrijfactie."
         }
       }
     },
     "take_precedence": {
-      "name": "Precedence nemen",
-      "description": "Neem een lock en leg de principal vast.",
+      "name": "Voorrang inschakelen",
+      "description": "Schakel voorrang in en wijs de leider aan.",
       "fields": {
         "lock": {
-          "name": "Precedence-lock",
-          "description": "De te nemen lock."
+          "name": "Voorrangsschakelaar",
+          "description": "De geldende voorrangsschakelaar."
         },
         "principal": {
-          "name": "Principal",
-          "description": "De leader van de superior smart group."
+          "name": "Hoofdleider",
+          "description": "De leider van de slimme groep die superieur is."
         }
       }
     },
     "release_precedence": {
-      "name": "Precedence vrijgeven",
-      "description": "Geef een precedence-lock vrij.",
+      "name": "Voorrang uitschakelen",
+      "description": "De uit te schakelen voorrangsschakelaar.",
       "fields": {
         "lock": {
-          "name": "Precedence-lock",
-          "description": "De vrij te geven lock."
+          "name": "Voorrangsschakelaar",
+          "description": "De uit te schakelen voorrangsschakelaar."
         }
       }
     }
   },
   "issues": {
     "blueprint_modified": {
-      "title": "Een blueprint is met rust gelaten",
+      "title": "Een blueprint is ongemoeid gelaten",
       "description": "`{name}` wijkt af van de versie die met deze update meekwam, dus het lijkt erop dat je hem hebt aangepast — hij is niet vervangen.\n\nJe automatiseringen blijven op jouw versie werken. Wil je de nieuwe, verwijder dan `{path}` en herlaad de integratie Sonos Smart Groups."
     }
   },
   "selector": {
-    "flavour": {
+    "controller": {
       "options": {
         "sonos": "Sonos",
         "music_assistant": "Music Assistant"

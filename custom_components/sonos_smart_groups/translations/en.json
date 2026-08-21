@@ -3,13 +3,13 @@
     "step": {
       "user": {
         "title": "Sonos Smart Groups",
-        "description": "A precedence lock lets one smart group outrank another. Name one per situation that should be able to take over your speakers — Home theater, Doorbell, Party. Separate several with commas; you can change this later.",
+        "description": "A precedence switch lets one smart group outrank another. Name one per situation that should be able to take over your rooms — Home theater, Doorbell, Party. Separate several with commas; you can change this later.",
         "data": {
-          "precedence_locks": "Precedence locks",
-          "flavour": "Players to build the blueprint around"
+          "precedence_locks": "Precedence switches",
+          "controller": "Music service and controlling media player"
         },
         "data_description": {
-          "flavour": "Pick the integration you actually control your speakers with. The Music Assistant blueprint leaves out the equalizer options, which do nothing for its players."
+          "controller": "Which players your speakers are actually controlled by. The Music Assistant blueprint leaves out the equalizer and home theater options, because Music Assistant exposes no such entities for Sonos players."
         }
       }
     },
@@ -23,11 +23,11 @@
         "title": "Precedence locks",
         "description": "One switch is created per name. Removing a name deletes its switch, so check that no smart group still refers to it.",
         "data": {
-          "precedence_locks": "Precedence locks",
-          "flavour": "Players to build the blueprint around"
+          "precedence_locks": "Precedence switches",
+          "controller": "Music service and controlling media player"
         },
         "data_description": {
-          "flavour": "Pick the integration you actually control your speakers with. The Music Assistant blueprint leaves out the equalizer options, which do nothing for its players."
+          "controller": "Which players your speakers are actually controlled by. The Music Assistant blueprint leaves out the equalizer and home theater options, because Music Assistant exposes no such entities for Sonos players."
         }
       }
     }
@@ -91,7 +91,7 @@
     }
   },
   "selector": {
-    "flavour": {
+    "controller": {
       "options": {
         "sonos": "Sonos",
         "music_assistant": "Music Assistant"

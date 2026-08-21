@@ -43,10 +43,10 @@ from .const import (
     BLUEPRINT_FILENAME,
     BLUEPRINT_LANGUAGES,
     BLUEPRINT_TARGET,
-    CONF_FLAVOUR,
-    DEFAULT_FLAVOUR,
+    CONF_CONTROLLER,
+    DEFAULT_CONTROLLER,
     DEFAULT_LANGUAGE,
-    FLAVOURS,
+    CONTROLLERS,
     ISSUE_BLUEPRINT_MODIFIED,
     DEFAULT_FACTOR,
     DEFAULT_GAP_MS,
@@ -142,25 +142,25 @@ async def _async_update_listener(hass: HomeAssistant, entry: ConfigEntry) -> Non
 
 
 def _pick_variant(hass: HomeAssistant, entry: ConfigEntry) -> tuple[str, str]:
-    """Which flavour and language of the blueprint this system should get."""
-    flavour = entry.options.get(
-        CONF_FLAVOUR, entry.data.get(CONF_FLAVOUR, DEFAULT_FLAVOUR)
+    """Which controller and language of the blueprint this system should get."""
+    controller = entry.options.get(
+        CONF_CONTROLLER, entry.data.get(CONF_CONTROLLER, DEFAULT_CONTROLLER)
     )
-    if flavour not in FLAVOURS:
-        flavour = DEFAULT_FLAVOUR
+    if controller not in CONTROLLERS:
+        controller = DEFAULT_CONTROLLER
 
     language = (hass.config.language or DEFAULT_LANGUAGE).split("-")[0].lower()
     if language not in BLUEPRINT_LANGUAGES:
         language = DEFAULT_LANGUAGE
 
-    return flavour, language
+    return controller, language
 
 
 async def _async_install_blueprints(hass: HomeAssistant, entry: ConfigEntry) -> None:
     """Install the blueprint that matches this system, and drop the others.
 
-    We ship one file per flavour and language. Only the matching one is
-    installed, always under the same name, so switching language or flavour
+    We ship one file per controller and language. Only the matching one is
+    installed, always under the same name, so switching language or controller
     replaces it rather than leaving a second copy in the list.
 
     Telling an untouched file from an edited one is the delicate part.
@@ -173,12 +173,12 @@ async def _async_install_blueprints(hass: HomeAssistant, entry: ConfigEntry) -> 
         hash matches what we wrote -> untouched, replace it
         hash matches neither       -> edited, leave alone and raise an issue
     """
-    flavour, language = _pick_variant(hass, entry)
-    source = Path(__file__).parent / "blueprints" / flavour / f"{language}.yaml"
+    controller, language = _pick_variant(hass, entry)
+    source = Path(__file__).parent / "blueprints" / controller / f"{language}.yaml"
     if not source.is_file():
-        source = Path(__file__).parent / "blueprints" / flavour / f"{DEFAULT_LANGUAGE}.yaml"
+        source = Path(__file__).parent / "blueprints" / controller / f"{DEFAULT_LANGUAGE}.yaml"
     if not source.is_file():
-        _LOGGER.warning("No bundled blueprint found for %s/%s", flavour, language)
+        _LOGGER.warning("No bundled blueprint found for %s/%s", controller, language)
         return
 
     target_dir = Path(hass.config.path(BLUEPRINT_TARGET))
@@ -219,7 +219,7 @@ async def _async_install_blueprints(hass: HomeAssistant, entry: ConfigEntry) -> 
     if wrote:
         await _async_reset_blueprint_cache(hass)
         _LOGGER.info(
-            "Installed the %s blueprint in %s", flavour.replace("_", " "), language
+            "Installed the %s blueprint in %s", controller.replace("_", " "), language
         )
 
     ir.async_delete_issue(hass, DOMAIN, ISSUE_BLUEPRINT_MODIFIED)

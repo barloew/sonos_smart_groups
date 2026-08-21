@@ -23,31 +23,31 @@ from homeassistant.helpers.selector import (
 )
 
 from .const import (
-    CONF_FLAVOUR,
+    CONF_CONTROLLER,
     CONF_LOCKS,
-    DEFAULT_FLAVOUR,
+    DEFAULT_CONTROLLER,
     DOMAIN,
-    FLAVOUR_MUSIC_ASSISTANT,
-    FLAVOUR_SONOS,
+    CONTROLLER_MUSIC_ASSISTANT,
+    CONTROLLER_SONOS,
 )
 
 DEFAULT_LOCKS = "Home theater"
 
 
-def _schema(locks: str, flavour: str) -> vol.Schema:
+def _schema(locks: str, controller: str) -> vol.Schema:
     return vol.Schema(
         {
             vol.Optional(CONF_LOCKS, default=locks): TextSelector(
                 TextSelectorConfig(multiline=False)
             ),
-            vol.Optional(CONF_FLAVOUR, default=flavour): SelectSelector(
+            vol.Optional(CONF_CONTROLLER, default=controller): SelectSelector(
                 SelectSelectorConfig(
                     mode=SelectSelectorMode.LIST,
-                    translation_key=CONF_FLAVOUR,
+                    translation_key=CONF_CONTROLLER,
                     options=[
-                        SelectOptionDict(value=FLAVOUR_SONOS, label="Sonos"),
+                        SelectOptionDict(value=CONTROLLER_SONOS, label="Sonos"),
                         SelectOptionDict(
-                            value=FLAVOUR_MUSIC_ASSISTANT, label="Music Assistant"
+                            value=CONTROLLER_MUSIC_ASSISTANT, label="Music Assistant"
                         ),
                     ],
                 )
@@ -73,12 +73,12 @@ class SonosSmartGroupsConfigFlow(ConfigFlow, domain=DOMAIN):
                 data={},
                 options={
                     CONF_LOCKS: user_input.get(CONF_LOCKS, ""),
-                    CONF_FLAVOUR: user_input.get(CONF_FLAVOUR, DEFAULT_FLAVOUR),
+                    CONF_CONTROLLER: user_input.get(CONF_CONTROLLER, DEFAULT_CONTROLLER),
                 },
             )
 
         return self.async_show_form(
-            step_id="user", data_schema=_schema(DEFAULT_LOCKS, DEFAULT_FLAVOUR)
+            step_id="user", data_schema=_schema(DEFAULT_LOCKS, DEFAULT_CONTROLLER)
         )
 
     @staticmethod
@@ -100,6 +100,6 @@ class SonosSmartGroupsOptionsFlow(OptionsFlow):
             step_id="init",
             data_schema=_schema(
                 self.config_entry.options.get(CONF_LOCKS, DEFAULT_LOCKS),
-                self.config_entry.options.get(CONF_FLAVOUR, DEFAULT_FLAVOUR),
+                self.config_entry.options.get(CONF_CONTROLLER, DEFAULT_CONTROLLER),
             ),
         )
